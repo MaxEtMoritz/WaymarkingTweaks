@@ -1,12 +1,16 @@
 // ==UserScript==
 // @name         Waymarking Tweaks
-// @namespace    http://github.com/MaxEtMoritz
+// @namespace    http://github.com/MaxEtMoritz/WaymarkingTweaks
 // @version      0.1
 // @description  tweak the waymarking.com site.
 // @author       GPSKaninchen
 // @match        http*://www.waymarking.com/*
 // @icon         https://www.waymarking.com/images/homepage/biglogo.gif
+// @updateURL    https://github.com/MaxEtMoritz/WaymarkingTweaks/raw/main/Waymarking%20Tweaks.user.js
+// @downloadURL  https://github.com/MaxEtMoritz/WaymarkingTweaks/raw/main/Waymarking%20Tweaks.user.js
+// @run-at       document-end
 // @grant        none
+// @resource     css /raw/main/WMTweaks.css
 // ==/UserScript==
 
 var extender = {
@@ -186,112 +190,6 @@ var extender = {
 (function() {
     window.addEventListener('load',extender.setup);
     var css = document.createElement('style');
-    css.textContent=`
-        #sidebar.sidebarHidden .gutter{
-        display: none;
-        }
-        #sidebar .gutter{
-        grid-column:2;
-        }
-        #sidebar{
-        position:absolute;
-        right:0;
-        display: grid;
-        height:100%;
-        width:auto;
-        min-width: unset;
-        margin-top:6vw;
-        max-width:min(90vw,370px);
-        }
-        #toggleSidebar{
-        grid-column: 1;
-        width: min-content;
-        padding:0;
-        }
-        #content{
-        width: calc(100% - 1em);
-        margin-top:6vw;
-        }
-        #wrap{
-        max-width:unset;
-        min-width:unset;
-        }
-        .bannerimage{
-        display:none;
-        }
-        #header{
-        display:none;
-        }
-        #searchtabs{
-        position:inherit;
-        }
-        #mobileHeader{
-        width: 100%;
-        position: fixed;
-        background-color:#56849b;
-        }
-        #mobileNav.navHidden li{
-        display:none;
-        }
-        #mobileHeader ul{
-        margin-block:0;
-        list-style: none;
-        padding-inline: 0;
-        text-align: center;
-        }
-        #mobileHeader ul li{
-        margin:10px;
-        }
-        #mobileHeader ul li a{
-        display:block;
-        padding:1vw;
-        color: #333;
-        text-decoration: none;
-        border: 1px solid #ccc;
-        background: #f9e9a9 url(../images/blue.gif) repeat-x top left;
-        }
-        #mobileHeader ul li a:hover{
-        color: #333;
-        border-color: #ccc;
-        background: #fff url(../images/yellow.gif) repeat-x top left;
-        }
-        #mobileLogo, #mobileProfile img, #mobileNavBtn img{
-        max-width:100%;
-        max-height:100%;
-        height: 6vw;
-        }
-        #mobileProfile{
-        float:right;
-        margin-right:10px;
-        padding:0;
-        }
-        #mobileNavBtn{
-        margin-left:10px;
-        margin-right:41vw;
-        padding:0;
-        }
-        #mobileHeader button{
-        color: #333;
-        text-decoration: none;
-        border: 1px solid #ccc;
-        background: #f9e9a9 url(../images/blue.gif) repeat-x top left;
-        }
-        #AccountActions.profileHidden > li{
-        display:none;
-        }
-        #search_addresstextbox{
-        position:inherit;
-        }
-        .home-banner{
-        display:none;
-        }
-        #footerlinks{
-        width:auto;
-        }
-        body{
-        padding: 0px;
-        width:100vw;
-        }
-        `;
+    css.textContent=GM.getResourceText('css');
     document.head.append(css);
 })();
