@@ -31,9 +31,6 @@ If this doesn't work, look for an option to install a userscript by URL and ente
 - some size adjustments (not that good yet)
 
 ## Example Screenshots
-
-Homepage without userscript:
-![before.jpg](images/before.jpg)
-
-Homepage with userscript:
-![after.jpg](images/after.jpg)
+|Before|After|
+|:----:|:-----:|
+|![before.jpg](images/before.jpg)|![after.jpg](images/after.jpg)|
