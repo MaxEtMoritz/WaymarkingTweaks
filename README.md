@@ -1,6 +1,12 @@
 # Waymarking Tweaks
 
-This userscript shall make waymarking.com a bit more mobile-friendly.
+Waymarking is a game similar to Geocaching, just without physical containers. You can visit real-world locations and log your visits on the Waymarking website.
+
+Unfortunately, [waymarking.com](https://www.waymarking.com/) is up since 2005 and did not recieve major updates since about 2007 / 2008. So it looks okay (not good imo, but usable) on Desktop browsers, but awful on mobile devices.
+
+Since Waymarking is mostly an outdoor activity and technology has evolved since that time (You take your smartphone everywhere nowadays), the website badly needs a UI for mobile devices (or an Android App, like [Waymarkly](https://apps.apple.com/app/waymarkly-a-waymarking-app/id1485909913?uo=4) for iOS).
+
+This userscript tries to modify the website to make the overall site appearance a bit more mobile friendly.
 
 ## How to use
 
