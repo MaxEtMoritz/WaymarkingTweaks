@@ -218,7 +218,16 @@ function setup() {
   }
 
   //set max width to prevent overflow
-  setTimeout(updateMaxWidth, 0);
+  updateMaxWidth();
+
+  // special handling for category grid
+  if(document.getElementById('ctl00_ContentBody_GridPanel1_tblGrid')){
+    let table = document.getElementById('ctl00_ContentBody_GridPanel1_tblGrid');
+    let container = document.createElement('div');
+    container.style.overflow = 'auto';
+    table.parentElement.insertBefore(container,table);
+    container.appendChild(table);
+  }
 
   //do a custom header
   var hdr = document.createElement("div");
@@ -356,19 +365,32 @@ function getTotalOffsetLeft(element) {
 
 function updateMaxWidth() {
   let start = new Date();
-  console.debug('UpdateMaxWidth started');
+  console.debug("UpdateMaxWidth started");
   let elems = document.querySelectorAll(
-    "#wrap :not(br):not(style):not(#toggleSidebar):not(#mobileHeader):not(#mobileHeader *):not(#sidebar)"
+    "#wrap :not(br):not(style):not(#toggleSidebar):not(#mobileHeader):not(#mobileHeader *):not(#sidebar):not(#ctl00_ContentBody_GridPanel1_tblGrid *)"
   );
   elems.forEach(function (elem) {
-    let offset = getTotalOffsetLeft(elem);
-    if (offset >= document.documentElement.clientWidth) {
-      elem.parentElement.insertBefore(document.createElement("br"), elem);
-      offset = getTotalOffsetLeft(elem);
-    }
-    setTimeout((args)=>{args[0].style["max-width"] = `calc(100vw - 1.1em - ${args[1]}px)`},0,[elem, offset]);
+    setTimeout(
+      (args) => {
+        let offset = getTotalOffsetLeft(args[0]);
+        if (offset >= document.documentElement.clientWidth) {
+          args[0].parentElement.insertBefore(
+            document.createElement("br"),
+            args[0]
+          );
+          offset = getTotalOffsetLeft(args[0]);
+        }
+        args[0].style["max-width"] = `calc(100vw - 1.1em - ${offset}px)`;
+      },
+      0,
+      [elem]
+    );
   });
-  console.debug("UpdateMaxWidth duration: ",(new Date() - start)/1000, "seconds.");
+  console.debug(
+    "UpdateMaxWidth duration: ",
+    (new Date() - start) / 1000,
+    "seconds."
+  );
 }
 
 (function () {
@@ -379,7 +401,7 @@ function updateMaxWidth() {
   meta.content = "width=device-width, height=device-height, initial-scale=1";
   document.head.append(meta);
   // wait until DOM is loaded until setting up the rest.
-  document.addEventListener('DOMContentLoaded',setup);
+  document.addEventListener("DOMContentLoaded", setup);
   // re-calculate maximum element width on resize.
   window.addEventListener("resize", updateMaxWidth);
 })();
