@@ -367,7 +367,7 @@ function updateMaxWidth() {
   let start = new Date();
   console.debug("UpdateMaxWidth started");
   let elems = document.querySelectorAll(
-    "#wrap :not(br):not(style):not(#toggleSidebar):not(#mobileHeader):not(#mobileHeader *):not(#sidebar):not(#ctl00_ContentBody_GridPanel1_tblGrid *)"
+    "#wrap :not(br):not(style):not(#toggleSidebar):not(#mobileHeader):not(#mobileHeader *):not(#header *):not(#sidebar):not(#ctl00_ContentBody_GridPanel1_tblGrid *)"
   );
   elems.forEach(function (elem) {
     setTimeout(
