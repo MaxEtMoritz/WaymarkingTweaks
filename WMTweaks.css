@@ -8,7 +8,7 @@
 #sidebar {
   position: fixed;
   right: 0;
-  top: 6vmin;
+  top: 4rem;
   bottom: 0;
   display: grid;
   width: auto;
@@ -20,13 +20,13 @@
 }
 #toggleSidebar {
   grid-column: 1;
-  width: 1.1em;
+  width: 2rem;
   padding: 0;
   background: linear-gradient(#56849b, lightblue);
 }
 #content {
-  width: calc(100% - 1.1em);
-  margin-top: 6vmin;
+  width: calc(100% - 2rem);
+  margin-top: 4rem;
 }
 #wrap {
   max-width: unset;
@@ -63,7 +63,7 @@
 }
 #mobileHeader ul li a {
   display: block;
-  padding: 1vw;
+  padding: 1rem;
   color: #333;
   text-decoration: none;
   border: 1px outset #ccc;
@@ -79,7 +79,7 @@
 #mobileNavBtn img {
   max-width: 100%;
   max-height: 100%;
-  height: 6vmin;
+  height: 4rem;
 }
 #mobileProfile {
   float: right;
@@ -88,7 +88,7 @@
 }
 #mobileNavBtn {
   margin-left: 10px;
-  margin-right: 41vw;
+  margin-right: calc(50% - 4rem);
   padding: 0;
 }
 #mobileHeader button {
