@@ -12,7 +12,7 @@ This userscript tries to modify the website to make the overall site appearance 
 
 You need a mobile browser that supports extensions.
 
-I am using [Kiwi Browser](https://play.google.com/store/apps/details?id=com.kiwibrowser.browser) on my android smartphone. [Flow Browser](https://play.google.com/store/apps/details?id=org.flow.browser) should also work.
+I am using [Kiwi Browser](https://play.google.com/store/apps/details?id=com.kiwibrowser.browser) on my android smartphone. [Yandex Browser](https://play.google.com/store/apps/details?id=com.yandex.browser) should also work.
 
 [Firefox](https://play.google.com/store/apps/details?id=org.mozilla.firefox) only supports very few extensions and currently no userscript manager extension, so this will not work.
 
