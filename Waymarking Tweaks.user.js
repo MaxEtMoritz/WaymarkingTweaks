@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Waymarking Tweaks
 // @namespace    http://github.com/MaxEtMoritz/WaymarkingTweaks
-// @version      0.2
+// @version      0.3
 // @description  tweak the waymarking.com site.
 // @author       GPSKaninchen
 // @match        http*://www.waymarking.com/*
