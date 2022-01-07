@@ -27,7 +27,7 @@ function setup() {
   #sidebar {
     position: fixed;
     right: 0;
-    top: 4rem;
+    top: 10vmin;
     bottom: 0;
     display: grid;
     width: auto;
@@ -39,13 +39,13 @@ function setup() {
   }
   #toggleSidebar {
     grid-column: 1;
-    width: 2rem;
+    width: 1.5rem;
     padding: 0;
     background: linear-gradient(#56849b, lightblue);
   }
   #content {
-    width: calc(100% - 2rem);
-    margin-top: 4rem;
+    width: calc(100% - 1.5rem);
+    margin-top: 10vmin;
   }
   #wrap {
     max-width: unset;
@@ -82,7 +82,7 @@ function setup() {
   }
   #mobileHeader ul li a {
     display: block;
-    padding: 1rem;
+    padding: 3vmin;
     color: #333;
     text-decoration: none;
     border: 1px outset #ccc;
@@ -98,7 +98,7 @@ function setup() {
   #mobileNavBtn img {
     max-width: 100%;
     max-height: 100%;
-    height: 4rem;
+    height: 10vmin;
   }
   #mobileProfile {
     float: right;
@@ -107,7 +107,7 @@ function setup() {
   }
   #mobileNavBtn {
     margin-left: 10px;
-    margin-right: calc(50% - 4rem);
+    margin-right: calc(50% - 15vmin - 10px);
     padding: 0;
   }
   #mobileHeader button {
@@ -138,6 +138,7 @@ function setup() {
   * {
     min-width: unset;
     overflow-wrap: break-word;
+    white-space: normal;
   }
   #ctl00_ContentBody_HuntUserGridControl1_uxGrid * {
     margin: 0;
@@ -327,28 +328,44 @@ function setup() {
 function getTotalOffsetLeft(element) {
   return element.getBoundingClientRect().left + window.pageXOffset;
 }
-
-function updateMaxWidth() {
+/**@param e {HTMLElement} if specified, query this element */
+function updateMaxWidth(e = null) {
   let start = new Date();
   console.debug('UpdateMaxWidth started');
   let elems;
   try {
-    elems = document.querySelectorAll(
-      '#wrap :not(br):not(style):not(#toggleSidebar):not(#mobileHeader):not(#mobileHeader *):not(#header *):not(#sidebar):not(#ctl00_ContentBody_GridPanel1_tblGrid *)'
-    );
+    if (!e) {
+      e = document;
+    }
+    elems = e.querySelectorAll('#wrap :not(br):not(style):not(#toggleSidebar):not(#mobileHeader):not(#mobileHeader *):not(#header *):not(#sidebar):not(#ctl00_ContentBody_GridPanel1_tblGrid *)');
   } catch (e) {
     alert('This Browser is not fully supported. try another one. Kiwi Browser and Yandex Browser are known to work.');
     elems = [];
   }
+  // compute what 1.5 rem is in pixels (to subtract from the viewport width). https://stackoverflow.com/a/42769683
+  const oneDot5rem = 1.5 * parseFloat(getComputedStyle(document.documentElement).fontSize);
+  console.debug(oneDot5rem);
   elems.forEach(function (elem) {
     setTimeout(
       args => {
-        let offset = getTotalOffsetLeft(args[0]);
-        if (offset >= document.documentElement.clientWidth) {
-          args[0].parentElement.insertBefore(document.createElement('br'), args[0]);
-          offset = getTotalOffsetLeft(args[0]);
+        if (args[0].style.display == 'none') {
+          const observer = new MutationObserver((mutations, observer) => {
+            mutations.forEach(record => {
+              if (record.target.style.display != 'none') {
+                updateMaxWidth(record.target);
+                observer.disconnect();
+              }
+            });
+          });
+          observer.observe(args[0], { childList: false, attributes: true, attributeFilter: ['style'] });
+        } else {
+          let offset = getTotalOffsetLeft(args[0]);
+          if (offset >= document.documentElement.clientWidth - oneDot5rem) {
+            args[0].parentElement.insertBefore(document.createElement('br'), args[0]);
+            offset = getTotalOffsetLeft(args[0]);
+          }
+          args[0].style['max-width'] = `calc(100vw - 1.5rem - ${offset}px)`;
         }
-        args[0].style['max-width'] = `calc(100vw - 2em - ${offset}px)`;
       },
       0,
       [elem]
