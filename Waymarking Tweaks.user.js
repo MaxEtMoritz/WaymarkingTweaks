@@ -122,6 +122,9 @@ function setup() {
   #search_addresstextbox {
     position: relative;
   }
+  #search_options{
+    left: unset;
+  }
   .home-banner {
     display: none;
   }
@@ -192,6 +195,18 @@ function setup() {
       };
       document.getElementById('search_addresstextbox').insertBefore(btn, document.getElementById('search_additional'));
     }
+  }
+
+  // special handling for profile table
+  if (document.getElementById('ctl00_ContentBody_ProfilePanel1_pnlProfile')) {
+    let td =
+      document.getElementById('ctl00_ContentBody_ProfilePanel1_pnlProfile').firstElementChild.firstElementChild.firstElementChild.firstElementChild.firstElementChild.firstElementChild // div // table // tbody // tr // td // table // tbody
+        .firstElementChild.lastElementChild; // tr // second td
+
+    let newRow = document.createElement('tr');
+    td.align = 'left';
+    td.parentElement.parentElement.insertBefore(newRow, td.parentElement.nextElementSibling);
+    newRow.append(td);
   }
 
   //set max width to prevent overflow
@@ -331,24 +346,28 @@ function getTotalOffsetLeft(element) {
 /**@param e {HTMLElement} if specified, query this element */
 function updateMaxWidth(e = null) {
   let start = new Date();
-  console.debug('UpdateMaxWidth started');
-  let elems;
+  let elems = [];
   try {
     if (!e) {
+      console.debug('UpdateMaxWidth started');
       e = document;
+    } else {
+      console.debug('UpdateMaxWidth started for',e);
+      elems.push(e);
     }
-    elems = e.querySelectorAll('#wrap :not(br):not(style):not(#toggleSidebar):not(#mobileHeader):not(#mobileHeader *):not(#header *):not(#sidebar):not(#ctl00_ContentBody_GridPanel1_tblGrid *)');
-  } catch (e) {
-    alert('This Browser is not fully supported. try another one. Kiwi Browser and Yandex Browser are known to work.' + e);
-    elems = [];
+    const nodes = e.querySelectorAll('#wrap :not(br):not(style):not(#toggleSidebar):not(#mobileHeader):not(#mobileHeader *):not(#header *):not(#sidebar):not(#ctl00_ContentBody_GridPanel1_tblGrid *)');
+    for (let i = 0; i < nodes.length; i++) {
+      elems.push(nodes[i]);
+    }
+  } catch (x) {
+    alert('This Browser is not fully supported. try another one. Kiwi Browser and Yandex Browser are known to work.' + x);
   }
   // compute what 1.5 rem is in pixels (to subtract from the viewport width). https://stackoverflow.com/a/42769683
   const oneDot5rem = 1.5 * parseFloat(getComputedStyle(document.documentElement).fontSize);
-  console.debug(oneDot5rem);
   elems.forEach(function (elem) {
     setTimeout(
       args => {
-        if (args[0].style.display == 'none') {
+        if (args[0].style.display == 'none' || (args[0].id == 'search_options' && getComputedStyle(args[0]).display == 'none')) {
           const observer = new MutationObserver((mutations, observer) => {
             mutations.forEach(record => {
               if (record.target.style.display != 'none') {
@@ -384,5 +403,5 @@ function updateMaxWidth(e = null) {
   // wait until DOM is loaded until setting up the rest.
   document.addEventListener('DOMContentLoaded', setup);
   // re-calculate maximum element width on resize.
-  window.addEventListener('resize', updateMaxWidth());
+  window.addEventListener('resize', ()=>updateMaxWidth());
 })();

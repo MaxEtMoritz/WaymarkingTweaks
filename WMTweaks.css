@@ -103,6 +103,9 @@
 #search_addresstextbox {
   position: relative;
 }
+#search_options{
+  left: unset;
+}
 .home-banner {
   display: none;
 }
