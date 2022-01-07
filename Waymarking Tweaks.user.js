@@ -339,7 +339,7 @@ function updateMaxWidth(e = null) {
     }
     elems = e.querySelectorAll('#wrap :not(br):not(style):not(#toggleSidebar):not(#mobileHeader):not(#mobileHeader *):not(#header *):not(#sidebar):not(#ctl00_ContentBody_GridPanel1_tblGrid *)');
   } catch (e) {
-    alert('This Browser is not fully supported. try another one. Kiwi Browser and Yandex Browser are known to work.');
+    alert('This Browser is not fully supported. try another one. Kiwi Browser and Yandex Browser are known to work.' + e);
     elems = [];
   }
   // compute what 1.5 rem is in pixels (to subtract from the viewport width). https://stackoverflow.com/a/42769683
@@ -384,5 +384,5 @@ function updateMaxWidth(e = null) {
   // wait until DOM is loaded until setting up the rest.
   document.addEventListener('DOMContentLoaded', setup);
   // re-calculate maximum element width on resize.
-  window.addEventListener('resize', updateMaxWidth);
+  window.addEventListener('resize', updateMaxWidth());
 })();
