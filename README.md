@@ -28,6 +28,8 @@ If this doesn't work, look for an option to install a userscript by URL and ente
 
 - "My Location" button that inserts your current location in the Waymark / Scavenger hunt search field
 
+- Markdown support for text fields with `HTML Enabled` option
+
 - Menu as expandable top bar
 
 - Sidebar collapsed to the right
