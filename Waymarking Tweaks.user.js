@@ -1,4 +1,5 @@
 // ==UserScript==
+/* globals showdown */
 // @name         Waymarking Tweaks
 // @namespace    http://github.com/MaxEtMoritz/WaymarkingTweaks
 // @version      0.3
@@ -11,7 +12,6 @@
 // @downloadURL  https://github.com/MaxEtMoritz/WaymarkingTweaks/raw/main/Waymarking%20Tweaks.user.js
 // @grant        none
 // ==/UserScript==
-
 function setup() {
   console.debug('setup');
   // append style to document head.
@@ -141,6 +141,8 @@ function setup() {
   * {
     min-width: unset;
     overflow-wrap: break-word;
+  }
+  *:not(textarea){
     white-space: normal;
   }
   #ctl00_ContentBody_HuntUserGridControl1_uxGrid * {
@@ -209,6 +211,127 @@ function setup() {
     newRow.append(td);
   }
 
+  // Look for "HTML enabled?" checkboxes
+  const HTMLBoxes = document.querySelectorAll('input[type="checkbox"][id*="IsHTML" i]');
+  if(HTMLBoxes.length > 0) {
+    // add showdown-js javascript
+    let script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/npm/showdown@1.9.1/dist/showdown.min.js';
+    script.crossOrigin = 'anonymous';
+    script.addEventListener('load',()=>{console.debug('showdown script loaded.'); showdown.setFlavor('original');})
+    document.head.append(script);
+    HTMLBoxes.forEach((/**@type{HTMLInputElement}*/box) => {
+      let dropdown = document.createElement('select');
+      // plain text option
+      let option = document.createElement('option');
+      option.text = 'Plain text';
+      option.value = 'plain';
+      dropdown.append(option);
+      // HTML option
+      option = document.createElement('option');
+      option.text = 'HTML';
+      option.value = 'html';
+      dropdown.append(option);
+      // Markdown option
+      option = document.createElement('option');
+      option.text = 'Markdown';
+      option.value = 'md';
+      if(box.checked){
+        dropdown.value = 'html';
+      }
+      dropdown.append(option);
+      dropdown.id = box.id + '_WMTweaks-inserted';
+      let previousValue = dropdown.value;
+      dropdown.addEventListener('focus',(e)=>{previousValue = e.target.value;})
+      dropdown.addEventListener('change',(/**@type{Event}*/evt) => {
+        const dd = evt.target;
+        let originalTArea = box.parentElement.parentElement.parentElement.nextElementSibling.querySelector('textarea');
+        const mdArea = box.parentElement.parentElement.parentElement.nextElementSibling.querySelector('.WMTweaks-inserted');
+        switch (dd.value) {
+          case 'plain':
+            box.checked = false;
+            if(mdArea){
+              originalTArea.value = mdArea.value;
+              originalTArea.dispatchEvent(new Event('paste'));
+              originalTArea.style.display = null;
+              mdArea.parentNode.removeChild(mdArea);
+            }
+            // TODO: probably call SetIsDirty()? or is that wrong? (is on the click handler of the checkboxes)
+            break;
+          case 'html':
+            box.checked = true;
+            if(mdArea){
+              const converter = new showdown.Converter();
+              originalTArea.value = converter.makeHtml(mdArea.value);
+              originalTArea.dispatchEvent(new Event('paste'));
+              originalTArea.style.display = null;
+              mdArea.parentNode.removeChild(mdArea);
+            }
+            // TODO: probably call SetIsDirty()? or is that wrong? (is on the click handler of the checkboxes)
+            break;
+          case 'md':
+            box.checked = true;
+            // find the corresponding textarea!
+            let newArea = document.createElement('textarea');
+            newArea.rows = originalTArea.rows;
+            newArea.cols = originalTArea.cols;
+            newArea.classList.add('WMTweaks-inserted');
+            newArea.addEventListener('change',(e)=>{
+              // TODO: Update x of y chars used!
+              console.debug('change');
+              const converter = new showdown.Converter();
+              originalTArea.value = converter.makeHtml(e.target.value);
+              originalTArea.dispatchEvent(new Event('paste'));
+            });
+            if(originalTArea.value){
+              if(previousValue == 'html'){
+              // parse html to markdown
+              const converter = new showdown.Converter();
+              newArea.value = converter.makeMarkdown(originalTArea.value);
+              } else{
+                // copy the text
+                newArea.value = originalTArea.value;
+              }
+            }
+            originalTArea.after(newArea);
+            originalTArea.style.display = 'none';
+            break;
+          default:
+            console.error('Unknown dropdown value ' + dd.value);
+            break;
+        }
+        previousValue = dd.value;
+      })
+      box.parentElement.prepend(dropdown);
+      let lbl = document.createElement('label');
+      lbl.htmlFor = box.id + '_WMTweaks_inserted';
+      lbl.innerText = 'Format: '
+      dropdown.before(lbl);
+      // hide checkbox and label
+      box.style.display = 'none';
+      box.nextElementSibling.style.display = 'none';
+    })
+  }
+console.debug(window.location.pathname == '/help/default.aspx');
+console.debug(window.location.search.indexOf('HTML Enabled'));
+console.debug(window.location.search);
+  // if help page for HTML enabled checkbox, display help for dropdown instead.
+  if(window.location.pathname == '/help/default.aspx' && window.location.search.indexOf('HTML%20Enabled')!=-1){
+    document.title = 'Format?'
+    let parent = document.querySelector('font');
+    parent.lastChild.remove();
+    let span = document.createElement('span');
+    span.innerHTML = `This dropdown lets you select the format of your input text.<br/>
+    The options are:
+    <ul>
+    <li>Plain Text: Your input is submitted as raw text and will display exactly like you entered it.</li>
+    <li>HTML: Your input is assumed to be in HTML format. Selecting this option when your content is not in HTML format could cause your content to display improperly.</li>
+    <li>Markdown: Your input is assumed to be in Markdown format. It will be converted to HTML before it is submitted to the server.</li>
+    </ul>
+    You can safely switch between Markdown and HTML, your Input will be converted from HTML to Markdown and vice versa.`
+    parent.append(span);
+  }
+
   //set max width to prevent overflow
   updateMaxWidth();
 
@@ -251,11 +374,7 @@ function setup() {
   logo.id = 'mobileLogo';
   homelink.append(logo);
   hdr.append(homelink);
-  try {
-    document.getElementById('wrap').prepend(hdr);
-  } catch (e) {
-    alert(e);
-  }
+  document.getElementById('wrap')?document.getElementById('wrap').prepend(hdr):null;
 
   //Account details / login Button
   let accBtn = document.createElement('button');

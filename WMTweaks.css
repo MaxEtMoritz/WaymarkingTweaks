@@ -122,6 +122,8 @@ body {
 * {
   min-width: unset;
   overflow-wrap: break-word;
+}
+*:not(textarea){
   white-space: normal;
 }
 #ctl00_ContentBody_HuntUserGridControl1_uxGrid * {
