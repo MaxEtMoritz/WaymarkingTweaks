@@ -151,6 +151,9 @@ function setup() {
     width: auto;
     font-weight: normal;
     font-size: inherit;
+  }
+  select[id*="WMTweaks-inserted"]{
+    margin-right: 1%;
   }`;
   document.head.append(css);
   if (navigator.geolocation) {
@@ -163,10 +166,10 @@ function setup() {
       btn.innerText = 'My Location';
       btn.onclick = function () {
         navigator.geolocation.getCurrentPosition(function (loc) {
-          document.getElementById('ctl00_ContentBody_FilterControl1_uxSearchLocation').value = `N ${loc.coords.latitude}° E ${loc.coords.longitude}°`;
+          input.value = `N ${loc.coords.latitude}° E ${loc.coords.longitude}°`;
         });
       };
-      input.parentElement.insertBefore(btn, input.nextElementSibling);
+      input.after(btn);
     }
 
     //My Location Button(Scavenger Hunt Search)
@@ -181,21 +184,22 @@ function setup() {
           input.value = `N ${loc.coords.latitude}° E ${loc.coords.longitude}°`;
         });
       };
-      input.parentElement.insertBefore(btn, document.getElementById('ctl00_ContentBody_NewSearchControl1_uxGameTextValidator'));
+      input.after(btn);
     }
 
     //My Location Button (Homepage etc.)
     if (document.getElementById('ctl00_ContentBody_NewSearchControl1_txtAddress')) {
+      let input = document.getElementById('ctl00_ContentBody_NewSearchControl1_txtAddress');
       let btn = document.createElement('button');
       btn.type = 'button';
       btn.id = 'InsertMyLocationWaym';
       btn.innerText = 'My Location';
       btn.onclick = function () {
         navigator.geolocation.getCurrentPosition(function (loc) {
-          document.getElementById('ctl00_ContentBody_NewSearchControl1_txtAddress').value = `N ${loc.coords.latitude}° E ${loc.coords.longitude}°`;
+          input.value = `N ${loc.coords.latitude}° E ${loc.coords.longitude}°`;
         });
       };
-      document.getElementById('search_addresstextbox').insertBefore(btn, document.getElementById('search_additional'));
+      input.after(btn);
     }
   }
 
@@ -207,7 +211,7 @@ function setup() {
 
     let newRow = document.createElement('tr');
     td.align = 'left';
-    td.parentElement.parentElement.insertBefore(newRow, td.parentElement.nextElementSibling);
+    td.parentElement.after(newRow);
     newRow.append(td);
   }
 
@@ -245,8 +249,8 @@ function setup() {
       dropdown.addEventListener('focus',(e)=>{previousValue = e.target.value;})
       dropdown.addEventListener('change',(/**@type{Event}*/evt) => {
         const dd = evt.target;
-        let originalTArea = box.parentElement.parentElement.parentElement.nextElementSibling.querySelector('textarea');
-        const mdArea = box.parentElement.parentElement.parentElement.nextElementSibling.querySelector('.WMTweaks-inserted');
+        let originalTArea = box.parentElement.parentElement.parentElement.parentElement.nextElementSibling.querySelector('textarea');
+        const mdArea = originalTArea.parentElement.querySelector('.WMTweaks-inserted');
         switch (dd.value) {
           case 'plain':
             box.checked = false;
@@ -304,9 +308,14 @@ function setup() {
       })
       box.parentElement.prepend(dropdown);
       let lbl = document.createElement('label');
-      lbl.htmlFor = box.id + '_WMTweaks_inserted';
+      lbl.htmlFor = box.id + '_WMTweaks-inserted';
       lbl.innerText = 'Format: '
       dropdown.before(lbl);
+      let td = box.parentElement.parentElement;
+      let span = document.createElement('div');
+      //span.style.float = 'right';
+      Array.from(td.children).forEach((e)=>{span.append(e);})
+      td.previousElementSibling.append(span);
       // hide checkbox and label
       box.style.display = 'none';
       box.nextElementSibling.style.display = 'none';
@@ -340,10 +349,10 @@ console.debug(window.location.search);
     let table = document.getElementById('ctl00_ContentBody_GridPanel1_tblGrid');
     let container = document.createElement('div');
     container.style.overflow = 'auto';
-    table.parentElement.insertBefore(container, table);
+    table.before(container);
     container.appendChild(table);
   }
-
+  if(document.getElementById('header')){
   //do a custom header
   var hdr = document.createElement('div');
   hdr.id = 'mobileHeader';
@@ -430,9 +439,10 @@ console.debug(window.location.search);
   loginItem.append(loginLink);
   accList.append(loginItem);
   hdr.append(accList);
+}
 
   //TODO Heading!
-
+if(document.getElementById('sidebar')){
   //Sidebar hide Button
   var hideSidebar = document.createElement('button');
   hideSidebar.innerText = '<';
@@ -449,12 +459,15 @@ console.debug(window.location.search);
       hideSidebar.innerText = '<';
     }
   };
-  document.getElementById('sidebar').insertBefore(hideSidebar, document.getElementById('sidebar').firstElementChild);
+  document.getElementById('sidebar').prepend(hideSidebar);
+}
 
   //hide all elements by default.
-  document.getElementById('sidebar').classList.add('sidebarHidden');
+  document.getElementById('sidebar')?document.getElementById('sidebar').classList.add('sidebarHidden'):null;
+  if(document.getElementById('header')){
   document.getElementById('AccountActions').classList.add('profileHidden');
   document.getElementById('mobileNav').classList.add('navHidden');
+  }
 }
 /**
  * @param element {HTMLElement}
@@ -499,7 +512,7 @@ function updateMaxWidth(e = null) {
         } else {
           let offset = getTotalOffsetLeft(args[0]);
           if (offset >= document.documentElement.clientWidth - oneDot5rem) {
-            args[0].parentElement.insertBefore(document.createElement('br'), args[0]);
+            args[0].before(document.createElement('br'));
             offset = getTotalOffsetLeft(args[0]);
           }
           args[0].style['max-width'] = `calc(100vw - 1.5rem - ${offset}px)`;
@@ -519,8 +532,14 @@ function updateMaxWidth(e = null) {
   meta.name = 'viewport';
   meta.content = 'width=device-width, height=device-height, initial-scale=1';
   document.head.append(meta);
-  // wait until DOM is loaded until setting up the rest.
-  document.addEventListener('DOMContentLoaded', setup);
+  if(document.readyState === 'complete' || document.readyState === 'interactive') {
+    // DOM is already completely loaded, directly set things up. (this happened a lot on the small help page)
+    console.debug('DOM was already loaded.')
+    setup();
+  } else {
+    // wait until DOM is loaded until setting up the rest.
+    document.addEventListener('DOMContentLoaded', setup);
+  }
   // re-calculate maximum element width on resize.
   window.addEventListener('resize', ()=>updateMaxWidth());
 })();
