@@ -2,7 +2,7 @@
 /* globals showdown */
 // @name         Waymarking Tweaks
 // @namespace    http://github.com/MaxEtMoritz/WaymarkingTweaks
-// @version      0.3
+// @version      0.4
 // @description  tweak the waymarking.com site.
 // @author       GPSKaninchen
 // @match        http*://www.waymarking.com/*
@@ -330,12 +330,12 @@ console.debug(window.location.search);
     let parent = document.querySelector('font');
     parent.lastChild.remove();
     let span = document.createElement('span');
-    span.innerHTML = `This dropdown lets you select the format of your input text.<br/>
+    span.innerHTML = `This dropdown lets you select the format of your content.<br/>
     The options are:
     <ul>
-    <li>Plain Text: Your input is submitted as raw text and will display exactly like you entered it.</li>
-    <li>HTML: Your input is assumed to be in HTML format. Selecting this option when your content is not in HTML format could cause your content to display improperly.</li>
-    <li>Markdown: Your input is assumed to be in Markdown format. It will be converted to HTML before it is submitted to the server.</li>
+    <li>Plain Text: Your content is submitted as raw text and will display exactly like you entered it.</li>
+    <li>HTML: Your content is assumed to be in HTML format. Selecting this option when your content is not in HTML format could cause your content to display improperly.</li>
+    <li>Markdown: Your content is assumed to be in Markdown format. It will be converted to HTML before it is submitted to the server. A short overview about the Markdown syntax can be found on <a href="https://www.markdownguide.org/basic-syntax/" target="_blank">markdownguide.org</a></li>
     </ul>
     You can safely switch between Markdown and HTML, your Input will be converted from HTML to Markdown and vice versa.`
     parent.append(span);
