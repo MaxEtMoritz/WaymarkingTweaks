@@ -2,17 +2,27 @@
   "name": "Waymarking Tweaks",
   "version": "0.0",
   "description": "Tweak Waymarking.com",
-  "manifest_version": 2,
-  "browser_action": {
+  "manifest_version": 3,
+  "action": {
     "default_title": "Open Extension"
   },
   "background": {
-    "service_worker": "background.js",
+    "service_worker": "worker/index.js",
     "type": "module"
   },
   "permissions":[
-    "webRequest",
-    "webRequestBlocking",
+    "declarativeNetRequest"
+  ],
+  "host_permissions":[
     "*://*.waymarking.com/*"
-  ]
+  ],
+  "declarative_net_request":{
+    "rule_resources":[
+        {
+            "id":"no-cors",
+            "enabled": true,
+            "path": "rules.json"
+        }
+    ]
+  }
 }

@@ -1,0 +1,19 @@
+[
+  {
+    "id": 1,
+    "condition": {
+      "domainType": "thirdParty",
+      "requestDomains": ["waymarking.com"]
+    },
+    "action": {
+        "type": "modifyHeaders",
+        "responseHeaders":[
+            {
+                "header": "Access-Control-Allow-Origin",
+                "operation": "set",
+                "value": "*"
+            }
+        ]
+    }
+  }
+]

@@ -32,7 +32,12 @@
                 "input": "public"
               },
               "src/manifest.json",
-              "src/background.js"
+              "src/rules.json",
+              {
+                "glob": "**/*",
+                "input": "src/worker",
+                "output": "/worker"
+              }
             ],
             "styles": [
               "src/styles.scss"

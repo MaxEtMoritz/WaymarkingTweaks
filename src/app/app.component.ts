@@ -13,11 +13,11 @@ export class AppComponent {
   title = 'WaymarkingTweaks';
 
   constructor(private http: HttpClient) {
-    http
-      .get('https://www.waymarking.com', { responseType: 'text' })
-      .subscribe({
-        next: (r) => console.debug(r),
-        error: (e) => console.error(e),
-      });
+    // http
+    //   .get('https://www.waymarking.com', { responseType: 'text' })
+    //   .subscribe({
+    //     next: (r) => console.debug(r),
+    //     error: (e) => console.error(e),
+    //   });
   }
 }
